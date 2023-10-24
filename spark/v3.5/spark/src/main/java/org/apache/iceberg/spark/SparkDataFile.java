@@ -61,7 +61,7 @@ public class SparkDataFile implements DataFile {
   }
 
   public SparkDataFile(
-          Types.StructType type, Types.StructType projectedType, StructType sparkType) {
+      Types.StructType type, Types.StructType projectedType, StructType sparkType) {
     this.lowerBoundsType = type.fieldType("lower_bounds");
     this.upperBoundsType = type.fieldType("upper_bounds");
     this.keyMetadataType = type.fieldType("key_metadata");
@@ -72,18 +72,18 @@ public class SparkDataFile implements DataFile {
     if (projectedType != null) {
       Types.StructType projectedPartitionType = projectedType.fieldType("partition").asStructType();
       this.partitionProjection =
-              StructProjection.create(partitionType, projectedPartitionType).wrap(wrappedPartition);
+          StructProjection.create(partitionType, projectedPartitionType).wrap(wrappedPartition);
     } else {
       this.partitionProjection = wrappedPartition;
     }
 
     Map<String, Integer> positions = Maps.newHashMap();
     type.fields()
-            .forEach(
-                    field -> {
-                      String fieldName = field.name();
-                      positions.put(fieldName, fieldPosition(fieldName, sparkType));
-                    });
+        .forEach(
+            field -> {
+              String fieldName = field.name();
+              positions.put(fieldName, fieldPosition(fieldName, sparkType));
+            });
 
     filePathPosition = positions.get("file_path");
     fileFormatPosition = positions.get("file_format");
@@ -158,28 +158,28 @@ public class SparkDataFile implements DataFile {
   @Override
   public Map<Integer, Long> nullValueCounts() {
     return wrapped.isNullAt(nullValueCountsPosition)
-            ? null
-            : wrapped.getJavaMap(nullValueCountsPosition);
+        ? null
+        : wrapped.getJavaMap(nullValueCountsPosition);
   }
 
   @Override
   public Map<Integer, Long> nanValueCounts() {
     return wrapped.isNullAt(nanValueCountsPosition)
-            ? null
-            : wrapped.getJavaMap(nanValueCountsPosition);
+        ? null
+        : wrapped.getJavaMap(nanValueCountsPosition);
   }
 
   @Override
   public Map<Integer, ByteBuffer> lowerBounds() {
     Map<?, ?> lowerBounds =
-            wrapped.isNullAt(lowerBoundsPosition) ? null : wrapped.getJavaMap(lowerBoundsPosition);
+        wrapped.isNullAt(lowerBoundsPosition) ? null : wrapped.getJavaMap(lowerBoundsPosition);
     return convert(lowerBoundsType, lowerBounds);
   }
 
   @Override
   public Map<Integer, ByteBuffer> upperBounds() {
     Map<?, ?> upperBounds =
-            wrapped.isNullAt(upperBoundsPosition) ? null : wrapped.getJavaMap(upperBoundsPosition);
+        wrapped.isNullAt(upperBoundsPosition) ? null : wrapped.getJavaMap(upperBoundsPosition);
     return convert(upperBoundsType, upperBounds);
   }
 
