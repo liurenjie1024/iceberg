@@ -26,9 +26,11 @@ import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.types.Types;
 
 class GenericDataFile extends BaseFile<DataFile> implements DataFile {
+  private final String deletionVectorPath;
   /** Used by Avro reflection to instantiate this class when reading manifest files. */
   GenericDataFile(Schema avroSchema) {
     super(avroSchema);
+    this.deletionVectorPath = null;
   }
 
   GenericDataFile(
@@ -41,7 +43,8 @@ class GenericDataFile extends BaseFile<DataFile> implements DataFile {
       ByteBuffer keyMetadata,
       List<Long> splitOffsets,
       int[] equalityFieldIds,
-      Integer sortOrderId) {
+      Integer sortOrderId,
+      String deletionVectorPath) {
     super(
         specId,
         FileContent.DATA,
@@ -60,6 +63,7 @@ class GenericDataFile extends BaseFile<DataFile> implements DataFile {
         equalityFieldIds,
         sortOrderId,
         keyMetadata);
+    this.deletionVectorPath = deletionVectorPath;
   }
 
   /**
@@ -70,10 +74,13 @@ class GenericDataFile extends BaseFile<DataFile> implements DataFile {
    */
   private GenericDataFile(GenericDataFile toCopy, boolean fullCopy) {
     super(toCopy, fullCopy);
+    this.deletionVectorPath = toCopy.deletionVectorPath;
   }
 
   /** Constructor for Java serialization. */
-  GenericDataFile() {}
+  private GenericDataFile() {
+    deletionVectorPath = null;
+  }
 
   @Override
   public DataFile copyWithoutStats() {
@@ -93,5 +100,10 @@ class GenericDataFile extends BaseFile<DataFile> implements DataFile {
         ImmutableMap.of(
             type, GenericDataFile.class.getName(),
             partitionStruct, PartitionData.class.getName()));
+  }
+
+  @Override
+  public String deletionVectorPath() {
+    return deletionVectorPath;
   }
 }

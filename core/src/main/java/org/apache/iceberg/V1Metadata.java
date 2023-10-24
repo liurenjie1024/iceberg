@@ -371,6 +371,8 @@ class V1Metadata {
           return wrapped.splitOffsets();
         case 14:
           return wrapped.sortOrderId();
+        case 15:
+          return wrapped.deletionVectorPath();
       }
       throw new IllegalArgumentException("Unknown field ordinal: " + pos);
     }
@@ -398,6 +400,11 @@ class V1Metadata {
     @Override
     public FileContent content() {
       return wrapped.content();
+    }
+
+    @Override
+    public String deletionVectorPath() {
+      return wrapped.deletionVectorPath();
     }
 
     @Override

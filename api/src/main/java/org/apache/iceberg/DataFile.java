@@ -98,6 +98,7 @@ public interface DataFile extends ContentFile<DataFile> {
   Types.NestedField SORT_ORDER_ID =
       optional(140, "sort_order_id", IntegerType.get(), "Sort order ID");
   Types.NestedField SPEC_ID = optional(141, "spec_id", IntegerType.get(), "Partition spec ID");
+  Types.NestedField DELETION_VECTOR_PATH = optional(142, "deletion_vector_path", StringType.get(), "Path of deletion vector file");
 
   int PARTITION_ID = 102;
   String PARTITION_NAME = "partition";
@@ -123,7 +124,7 @@ public interface DataFile extends ContentFile<DataFile> {
         KEY_METADATA,
         SPLIT_OFFSETS,
         EQUALITY_IDS,
-        SORT_ORDER_ID);
+        SORT_ORDER_ID, DELETION_VECTOR_PATH);
   }
 
   /** @return the content stored in the file; one of DATA, POSITION_DELETES, or EQUALITY_DELETES */
@@ -136,4 +137,6 @@ public interface DataFile extends ContentFile<DataFile> {
   default List<Integer> equalityFieldIds() {
     return null;
   }
+
+  String deletionVectorPath();
 }
